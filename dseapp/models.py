@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 from django.db import models
 
 from rest_framework.serializers import ModelSerializer
+from rest_framework.relations import PrimaryKeyRelatedField
 from rest_framework_serializer_extensions.serializers import SerializerExtensionsMixin
 
 class Parent(models.Model):
@@ -29,3 +30,15 @@ class ParentSerializer(SerializerExtensionsMixin, ModelSerializer):
                 serializer=ChildSerializer,
                 id_source='child.id'
             ))
+
+
+class VanillaParentSerializer(ModelSerializer):
+    child_id = PrimaryKeyRelatedField(
+        source='child.id',
+        queryset=Child.objects.all(),
+        allow_null=True,
+    )
+
+    class Meta:
+        model = Parent
+        fields = ('id','child_id')
